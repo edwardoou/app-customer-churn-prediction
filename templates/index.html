@@ -14,7 +14,7 @@
             <form action="/predict" method="POST" class="space-y-4">
                 <div>
                     <label for="client_id" class="block text-gray-700 font-semibold mb-1">ID del Cliente:</label>
-                    <input type="text" id="client_id" name="client_id" placeholder="Ingrese código de cliente" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    <input type="number" id="client_id" name="client_id" placeholder="Ingrese código de cliente" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-400">
                 </div>
                 <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-200">Predecir Estado</button>
             </form>
@@ -25,6 +25,13 @@
                 <!-- ABANDONA -- 708508758 -->
                 <!-- SE QUEDA 768805383 -->
             </div>
+            {% if cliente_no_existe %}
+            <div class="mt-6 w-full max-w-md mx-auto">
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center" role="alert">
+                    <span class="block sm:inline font-semibold">Cliente no existe.</span>
+                </div>
+            </div>
+            {% endif %}
         </div>
 
 {% if probabilidad and datos_cliente %}

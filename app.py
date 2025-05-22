@@ -22,7 +22,7 @@ def predict():
     # Buscar la fila del cliente
     cliente_row = df[df['CLIENTNUM'] == int(client_id)]
     if cliente_row.empty:
-        return render_template('index.html', probabilidad=None, prediccion=f"No se encontró el cliente con ID {client_id}")
+        return render_template('index.html', cliente_no_existe=True)
 
     # Extraer datos descriptivos
     cliente_info = cliente_row.iloc[0]
