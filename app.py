@@ -54,5 +54,8 @@ def predict():
     probabilidad, prediccion = predecir_cliente(cliente_row)
     return render_template('index.html', probabilidad=probabilidad*100, prediccion="ABANDONA Nuestros servicios" if prediccion == 1 else "CONTINUA con nuestros servicios", datos_cliente=datos_cliente)
 
+import os
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
