@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from model.model import predecir_cliente
 import pandas as pd
 import os
+from model.unsupervised_analysis import perform_unsupervised_analysis
 
 app = Flask(__name__)
 
@@ -55,6 +56,26 @@ def predict():
     return render_template('index.html', probabilidad=probabilidad*100, prediccion="ABANDONA Nuestros servicios" if prediccion == 1 else "CONTINUA con nuestros servicios", datos_cliente=datos_cliente)
 
 import os
+
+@app.route('/get_cluster_analysis')
+def get_cluster_analysis():
+    try:
+        # Leer el CSV
+        csv_path = os.path.join('assets', 'BankChurners.csv')
+        df = pd.read_csv(csv_path)
+        
+        # Renombrar la columna para que coincida con lo esperado por la función
+        if 'CLIENTNUM' in df.columns and 'CLIENT_ID' not in df.columns:
+            df = df.rename(columns={'CLIENTNUM': 'CLIENT_ID'})
+        
+        # Realizar análisis no supervisado para obtener la tabla HTML
+        cluster_stats_html = perform_unsupervised_analysis(df)
+        
+        # Devolver solo la tabla HTML
+        return cluster_stats_html
+    except Exception as e:
+        # Manejo de errores
+        return f"<p class='text-red-500'>Error al generar el análisis: {str(e)}</p>"
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

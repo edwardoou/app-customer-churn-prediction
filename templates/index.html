@@ -21,6 +21,9 @@
             <form method="GET" action="/" class="mt-4 flex justify-center">
                 <button type="submit" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded shadow">Limpiar datos</button>
             </form>
+            <div class="mt-4 text-center">
+                <button id="toggleUnsupervisedAnalysis" class="btn btn-outline-info px-4 py-2 text-blue-600 hover:text-blue-800 font-medium">Ver análisis no supervisado</button>
+            </div>
             <div class="mt-8 text-xs text-gray-400 text-center">
                 <!-- ABANDONA -- 708508758 -->
                 <!-- SE QUEDA 768805383 -->
@@ -32,6 +35,24 @@
                 </div>
             </div>
             {% endif %}
+        </div>
+
+        <!-- Análisis No Supervisado (inicialmente oculto) -->
+        <div id="unsupervisedAnalysisContainer" class="p-6 bg-blue-50 border border-blue-200 rounded w-full max-w-lg mx-auto mt-8" style="display: none;">
+            <h2 class="text-lg font-semibold text-blue-800 mb-4">Análisis No Supervisado de Clientes</h2>
+            
+            <div class="mb-6">
+                <h3 class="text-md font-semibold text-gray-700 mb-2">Segmentación de Clientes (Clusters)</h3>
+                
+                <div id="clusterTableContainer" class="overflow-x-auto mb-6">
+                    <p class="text-center text-gray-600">Cargando análisis de clusters...</p>
+                </div>
+                  <!-- Añadir el gráfico de segmentación -->
+                <!-- <div class="mt-6">
+                    <h3 class="text-md font-semibold text-gray-700 mb-2">Visualización de Clusters</h3>
+                    <img src="/static/customer_segments_current.png?t={{ range(1, 10000) | random }}" alt="Segmentación de Clientes" class="w-full rounded shadow border border-gray-200 mt-2">
+                </div> -->
+            </div>
         </div>
 
 {% if probabilidad and datos_cliente %}
@@ -54,5 +75,40 @@
             </div>
         {% endif %}
     </div>
+
+    <script>
+        // Script para mostrar/ocultar el análisis no supervisado y cargar la tabla
+        document.getElementById('toggleUnsupervisedAnalysis').addEventListener('click', function() {
+            const container = document.getElementById('unsupervisedAnalysisContainer');
+            
+            if (container.style.display === 'none') {
+                // Mostrar el contenedor
+                container.style.display = 'block';
+                
+                // Solicitar la tabla de clusters al servidor
+                fetch('/get_cluster_analysis')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error en la respuesta del servidor');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        // Mostrar la tabla en el contenedor
+                        document.getElementById('clusterTableContainer').innerHTML = data;
+                    })
+                    .catch(error => {
+                        document.getElementById('clusterTableContainer').innerHTML = 
+                            '<p class="text-red-500 text-center">Error al cargar el análisis: ' + error.message + '</p>';
+                    });
+                
+                // Scroll hasta la sección
+                container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                // Ocultar el contenedor
+                container.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 </html>
